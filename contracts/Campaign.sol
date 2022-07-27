@@ -1,8 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
-
-// Import this file to use console.log
-import "hardhat/console.sol";
+//SPDX-License-Identifier: Undefined
+pragma solidity ^0.8.1;
 
 contract CampaignFactory {
     address[] public deployedCampaigns;
@@ -30,9 +27,10 @@ contract Campaign {
     mapping(uint => Request) public requests; 
     address public manager; 
     uint public minimumContribution;
-    mapping(address => bool) public approvers; 
+    mapping(address => bool) approvers; 
 
     uint public approversCount; 
+    uint public requestCount; 
 
     uint numRequests;
 
@@ -54,6 +52,7 @@ contract Campaign {
 
     function createRequest(string memory description, uint value, address recipient) 
         public restricted {
+            requestCount++; 
             Request storage r = requests[numRequests++];
             r.description = description; 
             r.value = value;
@@ -80,5 +79,11 @@ contract Campaign {
         request.complete = true;
     }
 
-
+    function getSummaryInfo() public view returns (uint, uint, uint, uint, address) {
+        return (minimumContribution,
+            address(this).balance,
+            requestCount,
+            approversCount,
+            manager); 
+    }
 }
